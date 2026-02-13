@@ -1,12 +1,14 @@
-# Use Java 21 base image
-FROM eclipse-temurin:21-jdk
+# Build stage
+FROM maven:3.8.4-openjdk-21-slim AS builder
+WORKDIR /build
+COPY pom.xml .
+RUN mvn dependency:go-offline
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+# Run stage
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
-
-# Copy the jar file
-COPY target/*.jar app.jar
-
-# Expose port
+COPY --from=builder /build/target/*.jar app.jar
 EXPOSE 8080
-
-# Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
