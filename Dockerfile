@@ -1,5 +1,5 @@
-# Build stage
-FROM maven:3.8.4-openjdk-21-slim AS builder
+# Build stage avec une version récente de Maven
+FROM maven:3.9.6-eclipse-temurin-21 AS builder
 WORKDIR /build
 COPY pom.xml .
 RUN mvn dependency:go-offline
